@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load i18n %} {% load staticfiles %}
+{% block title %}Similarity values of proteins being compared{% endblock %}
+
+{% block header_title %}
+<h2 class="wow fadeindown">
+    <i class="fa fa-line-chart"></i> Global Similarity Search Results
+</h2>
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+{% endblock %}
+
+
+{% block content %}
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> Query Search time: {{ time }} seconds
+</div> <!-- alert -->
+
+<h2>Results of Comparison with {{ protein_compared }}</h2>
+<h4>Similarity Values are shown below:</h4>
+
+{% if no_result_found %}
+<div class="row">
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> No matching results found in the Database
+    </div><!--alert alert-success-->
+</div><!--row-->
+{% else %}
+<div clas="table-responsive"> 
+    <table id="similarityTable" class="table table-bordered table-striped table-hover">
+    </table>
+</div> <!--table-responsive-->
+{% endif %}
+<br/><br/>
+{% endblock %}
+
+
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript">
+var proteins = [
+{% for protein in protein_details_list %}
+[
+    "{{ protein.ProtId }}", "{{ protein.similarity }}",
+    "{{ protein.class}}", "{{ protein.class_desc }}",
+    "{{ protein.archi }}", "{{ protein.archi_desc }}",
+    "{{ protein.topfold }}", "{{ protein.topfold_desc }}",
+    "{{ protein.homsup }}", "{{ protein.homsup_desc }}"
+],
+{% endfor %}];
+console.log(proteins);
+$(document).ready(function(){
+    $('#similarityTable').dataTable({
+        data: proteins,
+        columns: [
+            {title: "Protein ID"},
+            {title: "Similarity Value"},
+            {title: "Class"},
+            {title: "Class Description"},
+            {title: "Architecture"},
+            {title: "Architecture Description"},
+            {title: "Topology Fold"},
+            {title: "Topology Fold Description"},
+            {title: "Homology Superfamily"},
+            {title: "Homology Superfamily Description"},
+        ]
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% block title %}Compare by Hierarchy Level{% endblock title %}
+
+{% block header_title %}
+<h2 class="wow fadeInDown">
+    <i class="fa fa-search"></i> Global Similarity Search by Hierarchy Level
+</h2>
+{% endblock header_title %}
+
+
+{% block content %}
+<form method="POST" action="{% url 'compare_by_hl_result' %}">
+    {% csrf_token %}
+    <br><br>
+    <div class="centered">
+        <label>Select PDB ID you want to compare:</b></label>
+        <br/><br/>
+        <select id="list1" name="list1"
+                onclick='list1Changed(this.value);'>
+            {% for protein in object_list %}
+            <option value="{{ protein.pk }}" >{{ protein.pk }}</option>
+            {% empty %}
+            <option value="">NO VALUES YET</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <p id="demo"></p>
+        <br>
+    </div><!--centered-->
+    <div class="row">
+        <div class="centered">
+            <label>Select a specific category :</label>
+        </div>
+        <br><br>
+        <div class="col-md-3">
+            <select name='classes' id='classes'
+                onchange='classChanged(this.value);'>
+                <option value='0'>Select Class</option>
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+            </select>
+        </div><!--col-md-3-->
+        <div class="col-md-3">
+            <select name= 'architectures' id='architectures'
+                onchange='architectureChanged(this.value);'>
+                <option value='0'>Select Architecture</option>
+            </select>
+        </div><!--col-md-3-->
+        <div class="col-md-3">
+            <select name='topfolds' id='topfolds'
+                onchange='topfoldChanged(this.value);'>
+                <option value='0'>Select Topfold</option>
+            </select>
+        </div><!--col-md-3-->
+        <div class="col-md-3">
+            <select name='homologies' id='homologies'
+                onchange='homologyChanged(this.value);'>
+                <option value='0'>Select HomologySuperfamily</option>
+            </select>
+        </div><!--col-md-3-->
+    </div><!--row-->
+    <br/><br/>
+    <div class="row">
+        <div class="centered">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-balance-scale"></i> Compare Hierarchy
+            </button>
+        </div><!--centered-->
+    </div><!--row-->
+</form>
+{% endblock %}
+
+
+
+{% block javascript %}
+<script type="text/javascript">
+function list1Changed(choice)
+{
+    document.getElementById("demo").innerHTML = 'Selected choice from list1  : '
+        + '<span class="badge badge1"> ' + choice + '</span> ';
+}
+var architectures1=["25"];
+var architectures2=["30", "130"];
+var architectures3=["10", "20", "30", "90"];
+
+var topfolds10=["50"];
+var topfolds20=["200"];
+var topfolds25=["40"];
+var topfolds30=["30", "200", "800", "1010"];
+var topfolds90=["1200", "810"];
+var topfolds130=["10"];
+
+var homologies10 = ["10"];
+var homologies30 = ["40"];
+var homologies40 = ["70"];
+var homologies50 = ["40"];
+var homologies200 = ["10", "20"];
+var homologies800 = ["10"];
+var homologies810 = ["10"];
+var homologies1010 = ["10"];
+var homologies1200 = ["10"];
+
+function classChanged(clas)
+{
+    var selectArchitecture = document.getElementById('architectures');
+    var ln = selectArchitecture.length - 1;
+    while (ln > 0)
+    {
+        selectArchitecture.remove(1);
+        ln--;
+    }
+    var selectTopfold = document.getElementById('topfolds');
+    var ln = selectTopfold.length - 1;
+    while (ln > 0)
+    {
+        selectTopfold.remove(1);
+        ln--;
+    }
+    var selectHomology = document.getElementById('homologies');
+    var ln = selectHomology.length - 1;
+    while (ln > 0)
+    {
+        selectHomology.remove(1);
+        ln--;
+    }
+
+    var architectureArray;
+
+    switch(clas)
+    {
+        case "1":
+            architectureArray=architectures1
+                break;
+        case "2":
+            architectureArray=architectures2
+                break;
+        case "3":
+            architectureArray=architectures3
+                break;
+        default:
+    }
+
+    for (i=0; i<architectureArray.length; i++)
+    {
+        var option = document.createElement('option');
+
+        option.text = architectureArray[i];
+        option.value = architectureArray[i];
+        selectArchitecture.add(option);
+    }
+}
+
+function architectureChanged(architecture)
+{
+    var selectTopfold = document.getElementById('topfolds');
+    var ln = selectTopfold.length - 1;
+    while (ln > 0)
+    {
+        selectTopfold.remove(1);
+        ln--;
+    }
+    var selectHomology = document.getElementById('homologies');
+    var ln = selectHomology.length - 1;
+    while (ln > 0)
+    {
+        selectHomology.remove(1);
+        ln--;
+    }
+
+    var topfoldArray;
+
+    switch(architecture)
+    {
+        case "10":
+            topfoldArray=topfolds10
+                break;
+        case "20":
+            topfoldArray=topfolds20
+                break;
+        case "25":
+            topfoldArray=topfolds25
+                break;
+        case "30":
+            topfoldArray=topfolds30
+                break;
+        case "90":
+            topfoldArray=topfolds90
+                break;
+        case "130":
+            topfoldArray=topfolds130
+                break;
+        default:
+    }
+
+    for (i=0; i<topfoldArray.length; i++)
+    {
+        var option = document.createElement('option');
+        option.text = topfoldArray[i];
+        option.value = topfoldArray[i];
+        selectTopfold.add(option);
+    }
+}
+
+
+function topfoldChanged(topfold)
+{
+    var selectHomology = document.getElementById('homologies');
+    var ln = selectHomology.length - 1;
+    while (ln > 0)
+    {
+        selectHomology.remove(1);
+        ln--;
+    }
+
+    var homologyArray;
+
+    switch(topfold)
+    {
+        case "10":
+            homologyArray=homologies10
+                break;
+        case "30":
+            homologyArray=homologies30
+                break;
+        case "40":
+            homologyArray=homologies40
+                break;
+        case "50":
+            homologyArray=homologies50
+                break;
+        case "200":
+            homologyArray=homologies200
+                break;
+        case "800":
+            homologyArray=homologies800
+                break;
+        case "810":
+            homologyArray=homologies810
+                break;
+        case "1010":
+            homologyArray=homologies1010
+                break;
+        case "1200":
+            homologyArray=homologies1200
+                break;
+        default:
+    }
+
+    for (i=0; i<homologyArray.length; i++)
+    {
+        var option = document.createElement('option');
+        option.text = homologyArray[i];
+        option.value = homologyArray[i];
+        selectHomology.add(option);
+    }
+}
+
+</script>
+{% endblock %}

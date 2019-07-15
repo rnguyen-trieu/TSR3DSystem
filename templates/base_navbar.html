@@ -1,0 +1,70 @@
+ {% load i18n %}{% load staticfiles %}
+<!-- NAVBAR
+================================================== -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+        <i class="icon-bar"></i>
+        <i class="icon-bar"></i>
+      </button>
+      <a class="navbar-brand" href="/"><b>TSR 3D</b></a>
+    </div>
+    <!--navbar-header-->
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" role="navigation" id="navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          {% trans "Global Similarity Search" %}
+          <span class="caret"></span>
+        </a>
+
+          <ul class="dropdown-menu">
+            <li class="{% if request.resolver_match.url_name == 'compare_by_pid_home' %}active{% endif %}">
+              <a href="{% url 'compare_by_pid_home' %}">
+                <i class='fa fa-search'></i>
+                {% trans "Protien ID" %}
+              </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'compare_by_hl_home' %}active{% endif %}">
+              <a href="{% url 'compare_by_hl_home' %}">
+                <i class='fa fa-search'></i> {% trans "Heirarchy Level" %}
+              </a>
+            </li>
+          </ul>
+          <!-- dropdown-menu -->
+        </li>
+        <!-- dropdown -->
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {% trans "Local Similarity Search" %}
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="{% if request.resolver_match.url_name == 'search_by_pid_home' %}active{% endif %}">
+              <a href="{% url 'search_by_pid_home' %}">
+                <i class='fa fa-search'></i> {% trans "Protein ID" %}
+              </a>
+            </li>
+            <li class="{% if request.resolver_match.url_name == 'search_by_pid_seq_home' %}active{% endif %}">
+              <a href="{% url 'search_by_pid_seq_home' %}">
+                <i class='fa fa-search'></i> {% trans "Protein ID and Seq" %}
+              </a>
+            </li>
+          </ul>
+          <!-- dropdown-menu -->
+        </li>
+        <!-- dropdown -->
+      </ul>
+      <!-- navbar-nav navbar-right -->
+    </div>
+    <!--collapse-->
+  </div>
+  <!--container-->
+</nav>
+<!-- navbar navbar-inverse -->
+<!-- END NAVBAR
+=========================== -->

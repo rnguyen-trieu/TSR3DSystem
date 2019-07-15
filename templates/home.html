@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block title %}Welcome to TSR Protein Website{% endblock %}
+
+
+{% block header %}
+<style>
+body {
+    color: #1e1e1e;
+    background: url('{ static 'images/pattern.png' %}');
+    background-color: #99CDFF;
+    text-shadow: 0 2px 0 rgba(0,0,0,.15);
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- start preloader -->
+<div class="preloader" id="preloader">
+  <img src="{% static 'img/Preloader.gif' %}" alt="Preloader" />
+</div> <!-- preloader -->
+
+<div class="container">
+    <br/><br/>
+    <h1 class="centered">Triangular Spatial Relation based Protein 3D System</h1>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <img src="{% static 'img/amino_acid.png' %}" >
+        </div> <!--col-md-4-->
+        <div class="col-md-4"></div>
+    </div> <!-- row -->
+
+    <br/><br/>
+
+    <h2 class="centered">Global Similarity Search</h2>
+    <div class="centered">
+        <code>
+        Displays the similarity scores of the selected proteins/hierarchies
+        </code>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <a href={% url 'compare_by_pid_home' %}
+                target="_blank" role="button"
+                title="Global Similarity Search by Protein ID"
+                data-toggle="popover" data-trigger="hover" data-placement="top"
+                data-content="Compare a protein with a list a proteins and returns Generalized Jaccard similarity values"
+                class="btn btn-default btn-block btn-lg raised" >
+                <i class="fa fa-search"></i> Protein ID
+            </a>
+        </div> <!-- col-md-3 -->
+        <div class="col-md-4">
+            <a href={% url 'compare_by_hl_home' %}
+                target="_blank" role="button"
+                title="Global Similarity Search by Hierarchy Level"
+                data-toggle="popover" data-trigger="hover" data-placement="top"
+                data-content="Compare a protein with proteins belonging to specific class, architecture, toplogy fold and homology superfamily and lists Generalized Jaccard Similarity values"
+                class="btn btn-default btn-block btn-lg raised" >
+                <i class='fa fa-search'></i> Hierarchy Level
+            </a>
+        </div> <!-- col-md-3 -->
+        <div class="col-md-2"></div>
+    </div> <!---row-->
+
+    <br/><br/>
+
+    <h2 class="centered">Local Similarity Search</h2>
+    <div class="centered">
+        <code>
+        Displays the proteins with common substructure and the corresponding keys
+        </code>
+    </div>
+    <br/>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <a href={% url 'search_by_pid_home' %}
+                data-scroll target="_blank" role="button"
+                title="Local Similarity Search by Protein IDs"
+                data-toggle="popover" data-trigger="hover" data-placement="bottom"
+                data-content="Search for the common keys among the proteins and also returns a list of proteins which contains these common keys"
+                class="btn btn-default btn-block btn-lg raised" >
+                <i class='fa fa-search'></i> Proteins ID
+            </a>
+        </div> <!-- col-md-4 -->
+        <div class="col-md-4">
+            <a href={% url 'search_by_pid_seq_home' %}
+                data-scroll target="_blank" role="button"
+                title="Local Similarity Search by Protein ID and Sequence ID"
+                data-toggle="popover" data-trigger="hover" data-placement="bottom"
+                data-content="Search for the common keys among the proteins containing specific amino acid sequences and also returns a list of proteins which contains these common keys"
+                class="btn btn-default btn-block btn-lg raised" >
+                <i class='fa fa-search'></i> Protein ID and Sequence
+            </a>
+        </div> <!-- col-md-4 -->
+        <div class="col-md-2"></div>
+    </div> <!-- row -->
+</div> <!-- container -->
+<div class="row">
+    <br/><br/>
+    <br/><br/>
+</div>
+<!-- end home -->
+{% endblock content %}
+
+
+
+{% block javascript %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+        $('[data-toggle="popover"]').popover()
+    });
+</script>
+{% endblock %}
