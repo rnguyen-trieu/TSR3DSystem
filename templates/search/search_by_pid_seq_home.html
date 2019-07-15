@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Search by Protein ID and Sequence{% endblock title %}
+
+{% block header_title %}
+<h2 class="wow fadeInDown">
+    <i class="fa fa-search"></i> Local Similarity Search by Protein ID and Sequence IDs
+</h2>
+{% endblock header_title %}
+
+{% block content %}
+<br/><br/>
+<form name="displayform" method="POST" action="{% url 'search_by_pid_seq_search_result' %}">{% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="centered">
+                <h4>Select the PDB ID you want to search for common keys:</h4>
+                <br/><br/>
+                <br/><br/>
+                <select id="pid" name="pid"
+                    onclick='pidChanged(this.value);'>
+                    {% for protein in proteins %}
+                    <option value="{{ protein }}" >{{ protein }}</option>
+                    {% empty %}
+                    <option value="">Failed to fetch values from database</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <p id="demo4"></p>
+            </div><!--centered-->
+        </div><!--col-dm-6-->
+        <div class="col-md-6">
+            <div class="centered">
+                <h4>Select three sequences which you want to search in the Protein</h4>
+                <code>Press CTRL and click to select multiple from the list</code>
+                <br/><br/>
+                <select id="seq_list" name="seq_list" size=10
+                    style="min-width:500px" multiple="multiple"
+                    onclick='seq_listChanged(this.value);'></select>
+                <br><br>
+                <p id="demo4_1"></p>
+            </div><!--centered-->
+        </div><!--col-md-6-->
+    </div><!--row-->
+    <br/><br/>
+    <div class="row">
+        <div class="centered">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-search"></i> Search
+            </button>
+        </div><!--centered-->
+    </div><!--row-->
+    <br/><br/>
+    <br/><br/>
+</form>
+{% endblock %}
+
+
+{% block javascript %}
+<script type="text/javascript">
+
+function pidChanged()
+    {
+      var str="",i;
+      for (i=0;i<displayform.pid.options.length;i++) {
+          if (displayform.pid.options[i].selected) {
+              str = str + '<span class="badge badge1">'
+                  + displayform.pid.options[i].value + '</span> ';
+          }
+      }
+        document.getElementById("demo4").innerHTML = 'Selected choice from list: ' + str ;
+    }
+
+function seq_listChanged()
+    {
+      var str="",i;
+      for (i=0;i<displayform.seq_list.options.length;i++) {
+          if (displayform.seq_list.options[i].selected) {
+              str = str + '<span class="badge badge3">'
+                  + displayform.seq_list.options[i].value + '</span> ';
+          }
+      }
+        document.getElementById("demo4_1").innerHTML = 'Selected choice(s) from list: ' + str ;
+    }
+</script>
+<script type="text/javascript">
+var seq_id_list = [{% for seq_id in seq_id_list %} {{ seq_id}}, {% endfor %}];
+window.onload=function() {
+    var protein_list = document.getElementById("pid");
+    var seq_list = document.getElementById("seq_list");
+    protein_list.onchange = function() {
+        seq_list.length=0;
+        var index = this.selectedIndex;
+        for(var i = 0; i < seq_id_list[index].length; i++) {
+            seq_list.options[seq_list.options.length] = new Option(seq_id_list[index][i], seq_id_list[index][i]);
+        }
+        seq_list.options[seq_list.options.length]=new Option("", "Failed to fetch values from database");
+    }
+    protein_list.onchange();
+}
+</script>
+{% endblock %}

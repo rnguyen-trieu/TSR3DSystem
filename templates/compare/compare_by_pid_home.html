@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Compare by Protein ID{% endblock %}
+
+{% block header_title %}
+<h2 class="wow fadeInDown">
+    <i class="fa fa-search"></i> Global Similarity Search by Protein ID
+</h2>
+{% endblock %}
+
+
+{% block content %}
+<br/><br/>
+<form name="displayform" method="POST" action="{% url 'compare_by_pid_result' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="centered">
+                <h4>Select the PDB ID you want to compare:</h4>
+                <br><br>
+                <br><br>
+                <select id="list1" name="list1"
+                    onclick='list1Changed(this.value);'
+                    style="margin:20px">
+                    {% for protein in object_list %}
+                    <option value="{{ protein.pk }}" >{{ protein.pk }}</option>
+                    {% empty %}
+                    <option value="">NO VALUES YET</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <p id="demo"></p>
+            </div><!--centered-->
+        </div><!--col-md-6-->
+        <div class="col-md-6">
+            <div class="centered">
+                <h4>Select PDB IDs you want to compare with:</h4>
+                <code>Press CTRL and click to select multiple from the list</code>
+            </div><!--centered-->
+            <br/>
+            <select id="list2" name="list2" size=10
+                style="min-width:500px" multiple="multiple"
+                onclick='list2Changed(this.value);'>
+                {% for protein in object_list %}
+                <option value="{{ protein.pk }}" >{{ protein.pk }}</option>
+                {% empty %}
+                <option value="">Could not fetch any values from database</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <p id="demo1"></p>
+        </div><!--col-md-6-->
+    </div><!--row-->
+    <br><br><br><br>
+    <div class="row">
+        <div class="centered">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-balance-scale"></i> Compare Proteins
+            </button>
+        </div><!--centered-->
+    </div><!--row-->
+</form>
+
+{% endblock %}
+
+
+{% block javascript %}
+<script type="text/javascript">
+function list1Changed(choice)
+    {
+        document.getElementById("demo").innerHTML = 'Selected choice from list1  : <span class="badge badge1">' + choice + '</span>';
+    }
+function list2Changed()
+    {
+      var str="",i;
+      for (i=0;i<displayform.list2.options.length;i++) {
+          if (displayform.list2.options[i].selected) {
+              str = str + '<span class="badge badge3">';
+              str = str + displayform.list2.options[i].value + " ";
+              str = str + '</span> ';
+          }
+      }
+      document.getElementById("demo1").innerHTML = 'Selected choice from list2  : '+str;
+    }
+
+</script>
+{% endblock %}

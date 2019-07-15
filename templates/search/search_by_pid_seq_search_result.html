@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load i18n %} {% load staticfiles %}
+{% block title %}Search Results{% endblock title %}
+
+{% block header_title %}
+<h2 class="wow fadeInDown">
+    <i class="fa fa-line-chart"></i> Local Similarity Search Results
+</h2>
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<div id="load"></div>
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> Query processing time: {{ time }} seconds
+</div> <!-- alert -->
+
+<h2>
+Proteins containing substructure made up of Amino acid Sequence IDs
+{% for seq in seq_list %} {{ seq }}, {% endfor %} of the protein {{ pid }}
+</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Common substructures</h4>
+        <table id="commonKeysTable" class="table table-striped table-bordered table-condensed">
+        </table>
+    </div><!--col-md-12-->
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h4>Protein IDs containing the substructures given above</h4>
+        <table id="proteinTable" class="table table-striped table-bordered table-condensed">
+        </table>
+    </div><!--col-md-12-->
+</div> <!--row-->
+<br/><br/>
+<br/><br/>
+{% endblock %}
+
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript">
+var common_keys = [{% for key in common_keys %} ["{{ key }}"], {% endfor %}];
+var proteins = [{% for protein in proteins %} ["{{ protein }}"], {% endfor %}];
+$(document).ready(function(){
+    $('#commonKeysTable').dataTable({
+        data: common_keys,
+        columns: [
+            {title: "Protein Key"},
+        ],
+        columnDefs: [
+            {
+                targets:0,
+                render: function ( data, type, row, meta ) {
+                    if(type === 'display'){
+                        var root = location.protocol + '//' + location.host;
+                        var url = root + '/search/proteinkey/' + encodeURIComponent(data);
+                        data = '<a href=' + url + ' target="_blank">' + data + '</a>';
+                    }
+                    return data;
+                }
+            }
+        ]
+    });
+    $('#proteinTable').dataTable({
+        data: proteins,
+        columns: [
+            {title: "Protein ID"},
+        ]
+    });
+});
+</script>
+{% endblock %}
