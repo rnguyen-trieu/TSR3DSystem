@@ -55,7 +55,8 @@ def search_by_protein_id(request):
     proteins = user_protein_list
 
     if len(protein_key_list) is 0:
-        sub_query = """ SELECT protein.protein_id_id FROM (SELECT "{0}_allproteins"."protein_id_id",
+        sub_query = """ SELECT protein.protein_id_id FROM (SELECT DISTINCT ON ("{0}_allproteins"."protein_key", 
+                        "{0}_allproteins"."protein_id_id") "{0}_allproteins"."protein_id_id",
                         "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE 
                         "{0}_allproteins"."protein_key" IN {1}) AS protein GROUP BY protein.protein_id_id 
                         HAVING COUNT(protein.protein_id_id) >= {2}; """.format(
@@ -69,8 +70,7 @@ def search_by_protein_id(request):
 
     context['common_keys'] = protein_key_list
     context['proteins'] = proteins
-    end = time.clock()
-    context['time'] = round(end - start, 4)
+    context['time'] = round(time.clock() - start, 4)
 
     return TemplateResponse(request, 'search/search_by_pid_result.html', context)
 
