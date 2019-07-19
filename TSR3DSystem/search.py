@@ -3,11 +3,11 @@ from collections import Counter
 from itertools import combinations
 
 from django.db.models import Q
-from django.db.models.aggregates import Count
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
 from django.template.response import TemplateResponse
 
+from .core import settings
 from .models import AllProteins, Hierarchy
 
 
@@ -24,45 +24,49 @@ class SearchByProteinID(ListView):
 def search_by_protein_id(request):
     """
     Input: A set of protein ids
-    Output: Commom keys, by clicking on each keys, displays
+    Output: Common keys, by clicking on each keys, displays
     list of all protein_ids having it and other details too
     """
     start = time.clock()
     context = {}
     user_protein_list = request.POST.getlist("list3")
 
-    if not user_protein_list and "small_table" in request.POST:
-        user_protein_list = ['1a06', '1muo']
+    if not user_protein_list:
+        user_protein_list = ['1AD6', '1BYG']
 
     context['protein_list'] = user_protein_list
-    temp = Hierarchy.objects.filter(pk__in=user_protein_list).prefetch_related('details')
-    protein_key_queryset = AllProteins.objects.filter(
-        protein_id__in=user_protein_list) \
-        .distinct() \
-        .values('protein_key') \
-        .annotate(key_count=Count('protein_key')) \
-        .filter(key_count__gte=len(user_protein_list)) \
-        .order_by('protein_key')
-    # distinct?? what for?
-    # this filter does not account for it not being in a protein but that it is more than 4 times
 
-    protein_key_list = list(protein_key_queryset.values_list('protein_key', flat=True))
+    query = """SELECT keys.protein_key AS id, COUNT(keys.protein_key) AS key_count FROM 
+               (SELECT DISTINCT ON ("{0}_allproteins"."protein_key", "{0}_allproteins"."protein_id_id")
+               "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE "{0}_allproteins"."protein_id_id" 
+               IN {1} ) AS keys GROUP BY keys.protein_key HAVING COUNT(keys.protein_key) >= {2}""".format(
+        settings.APP_MODEL_NAME,
+        str(tuple(user_protein_list)),
+        len(user_protein_list),
+    )
+    protein_key_queryset = AllProteins.objects.raw(query)
+    """
+       Distinct with specific columns for Django's ORM does not work with annotate
+       Changed to raw SQL, Django forces us to have an id column,
+       so a workaround is renaming the protein key column as id
+    """
+    protein_key_list = [each.id for each in protein_key_queryset]
 
-    sub_query = AllProteins.objects.filter(protein_key__in=protein_key_list) \
-        .distinct().values_list('protein_id', 'protein_key')
+    proteins = user_protein_list
 
-    cnt = Counter(elem[0] for elem in sub_query)
+    if len(protein_key_list) is 0:
+        sub_query = """ SELECT protein.protein_id_id FROM (SELECT "{0}_allproteins"."protein_id_id",
+                        "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE 
+                        "{0}_allproteins"."protein_key" IN {1}) AS protein GROUP BY protein.protein_id_id 
+                        HAVING COUNT(protein.protein_id_id) >= {2}; """.format(
+            settings.APP_MODEL_NAME,
+            str(tuple(protein_key_list)),
+            len(protein_key_list),
+        )
 
-    pro_list = [y for x, y in cnt.items() if y >= len(protein_key_list)]
-    # need to fix this line
-    proteins = []
+        similar_proteins = AllProteins.objects.raw(sub_query)
+        proteins = proteins.append([each.id for each in similar_proteins])
 
-    if protein_key_list and len(pro_list) < len(user_protein_list):
-        proteins = user_protein_list
-    else:
-        for i in range(len(pro_list)):
-            proteins.append(pro_list[i][0])
-        print(pro_list)
     context['common_keys'] = protein_key_list
     context['proteins'] = proteins
     end = time.clock()
