@@ -10,7 +10,8 @@
 
 {% block content %}
 <br/><br/>
-<form name="displayform" method="POST" action="{% url 'search_by_pid_result' %}">{% csrf_token %}
+<form name="displayform" method="POST" action="{% url 'search_by_pid_result' %}" onsubmit="return select_validation()">
+    {% csrf_token %}
     <div class="centered">
         <h4>Select PDB IDs you want to search for common keys: </h4>
         <code>Press CTRL and click to select multiple from the list</code>

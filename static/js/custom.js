@@ -1,4 +1,4 @@
 // preloader
-$(window).load(function(){
-    $('.preloader').fadeOut(1000); // set duration in brackets    
-});
+// $(":button[type='submit']").click(function(){
+//     $('.preloader').toggle(); // set duration in brackets
+// });
