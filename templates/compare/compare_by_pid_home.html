@@ -11,7 +11,7 @@
 
 {% block content %}
 <br/><br/>
-<form name="displayform" method="POST" action="{% url 'compare_by_pid_result' %}">
+<form name="displayform" method="POST" action="{% url 'compare_by_pid_result' %}" onsubmit="return select_validation()">
     {% csrf_token %}
     <div class="row">
         <div class="col-md-6">

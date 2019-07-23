@@ -1469,7 +1469,7 @@ body {
 
 /* Wrapper for page content to push down footer */
 #wrap {
-    min-height: 100%;
+    min-height: 80%;
     height: auto !important;
     height: 100%;
     /* Negative indent footer by its height */
@@ -1485,11 +1485,8 @@ body {
 
 
 #masthead {
-    margin-bottom:10px;
-    min-height:120px;
     color: #F8F0F0;
     background-color: #9B0B0B;
-    background-image:url('../img/pattern.png');
     text-shadow: 0 1px 0 rgba(0,0,0,.15);
 }
 #masthead .container {
@@ -1520,28 +1517,28 @@ body {
     background-color:#fff;
 }
 
-@media (min-width: 768px) {
-    #masthead h1 {
-        font-size: 100px;
-    }
-    #masthead h2 {
-        font-size: 60px;
-        color:#fff;
-    }
-}
-@media (min-width: 992px) {
-    #masthead .well {
-        position: absolute;
-        top: 20px;
-        right: 15px; /* 15px instead of 0 since box-sizing */
-        padding: 15px !important;
-        width: 330px !important;
-    }
-    #masthead h2 {
-        font-size: 65px;
-        color: #fff;
-    }
-}
+/*@media (min-width: 768px) {*/
+/*    #masthead h1 {*/
+        /*font-size: 100px;*/
+/*    }*/
+/*    #masthead h2 {*/
+        /*font-size: 60px;*/
+/*        color:#fff;*/
+/*    }*/
+/*}*/
+/*@media (min-width: 992px) {*/
+/*    #masthead .well {*/
+/*        position: absolute;*/
+/*        top: 20px;*/
+/*        right: 15px; !* 15px instead of 0 since box-sizing *!*/
+/*        padding: 15px !important;*/
+/*        width: 330px !important;*/
+/*    }*/
+/*    #masthead h2 {*/
+/*        font-size: 65px;*/
+/*        color: #fff;*/
+/*    }*/
+/*}*/
 
 .td-content {
     background-color: #f7f7f9;

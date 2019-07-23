@@ -4,3 +4,5 @@ venv/
 \.idea/
 
 __pycache__/
+
+TSR3DSystem/core/mad_triplets/
