@@ -8,12 +8,8 @@ from django.views.generic.base import TemplateView
 from django.template.response import TemplateResponse
 
 from .core import settings
+from .core.views import nav_bar
 from .models import AllProteins, Hierarchy
-
-
-def home(request):
-    ctx = {}
-    return TemplateResponse(request, 'home.html', ctx)
 
 
 class SearchByProteinID(ListView):
@@ -71,7 +67,7 @@ def search_by_protein_id(request):
     context['common_keys'] = protein_key_list
     context['proteins'] = proteins
     context['time'] = round(time.clock() - start, 4)
-
+    context.update(nav_bar())
     return TemplateResponse(request, 'search/search_by_pid_result.html', context)
 
 
@@ -83,6 +79,7 @@ class SearchProteinKey(TemplateView):
         key = int(self.kwargs['pk'])
         context['key'] = key
         context['proteins'] = AllProteins.objects.filter(Protein_Key=key)
+        context.update(nav_bar())
         return context
 
 
@@ -112,6 +109,7 @@ class SearchByProteinIDAndSeq(TemplateView):
         print(all_seq_list)
         context['proteins'] = protein_list
         context['seq_id_list'] = all_seq_list
+        context.update(nav_bar())
         return context
 
 
@@ -171,4 +169,5 @@ def search_by_protein_id_seq_step2(request):
         context['protein_keys_list'] = protein_key_list
     end = time.clock()
     context['time'] = round(end - start, 4)
+    context.update(nav_bar())
     return TemplateResponse(request, 'search/search_by_pid_seq_search_result.html', context)

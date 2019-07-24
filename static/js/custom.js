@@ -4,7 +4,6 @@
 // });
 
 
-
 // select multiple validation
 function select_validation() {
     if ($(":selected").length < 2) {

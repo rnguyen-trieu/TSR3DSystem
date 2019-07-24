@@ -6,11 +6,17 @@ from django.views.generic.list import ListView
 from django.template.response import TemplateResponse
 
 from .models import Hierarchy, Comparison
+from .core.views import nav_bar
 
 
 class CompareByProteinID(ListView):
     model = Hierarchy
     template_name = "compare/compare_by_pid_home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(nav_bar())
+        return context
 
 
 def compare_by_protein_id_result(request):
@@ -75,12 +81,18 @@ def compare_by_protein_id_result(request):
         context['no_result_found'] = True
     end = time.clock()
     context['time'] = round(end - start, 4)
+    context.update(nav_bar())
     return TemplateResponse(request, 'compare/compare_by_pid_result.html', context)
 
 
 class CompareByHierarchy(ListView):
     model = Hierarchy
     template_name = "compare/compare_by_hl_home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(nav_bar())
+        return context
 
 
 def compare_by_hierarchy_result(request):
@@ -164,4 +176,5 @@ def compare_by_hierarchy_result(request):
 
     end = time.clock()
     context['time'] = round(end - start, 4)
+    context.update(nav_bar())
     return TemplateResponse(request, 'compare/compare_by_hl_result.html', context)

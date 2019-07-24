@@ -16,12 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import compare, search
-from .core import insert
+from .core import insert, views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', search.home),
+    path('', views.home, name='home'),
 
     path('insert/proteins/', insert.insert_into_all_proteins_table, name='insert-proteins'),
     path('insert/key-occurrences/', insert.key_occurrence, name='insert-occurrences'),

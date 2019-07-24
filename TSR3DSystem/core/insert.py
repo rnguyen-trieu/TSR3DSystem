@@ -1,6 +1,20 @@
 import os
 
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+
 from TSR3DSystem.models import AllProteins, Hierarchy, Comparison
+from .forms import InsertProteinFile
+from .views import nav_bar
+
+def insert_protein_files(request):
+    if request.method == 'POST':
+        insert_proteins_form = InsertProteinFile(request.POST, request.FILES)
+        if insert_proteins_form.is_valid():
+            insert_proteins_form.save()
+    else:
+        ctx = nav_bar()
+        return redirect('home', ctx)
 
 
 def insert_into_all_proteins_table(request):
