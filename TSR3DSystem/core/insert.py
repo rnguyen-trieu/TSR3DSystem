@@ -24,23 +24,19 @@ def insert_into_all_proteins_table(request):
             print(file)
             f = open(root + file, 'r')
             protein_ID, _ = Hierarchy.objects.get_or_create(protein_id=str(os.path.splitext(file)[0]))
-            # print( sum(1 for line in f))
-            for counter, line in enumerate(f):
-                # if counter == 400000:
-                if counter == 5000:
-                    break
-                # if counter > 385362:
+            for line in f:
                 line = line.split('\t')
-                protein = AllProteins(protein_key=int(line[0]), aacd0=str(line[1]), position0=int(line[2]),
-                                      aacd1=str(line[3]), position1=int(line[4]), aacd2=str(line[5]),
-                                      position2=int(line[6]), classT1=int(line[7]), theta=float(line[8]),
-                                      classL1=int(line[9]), maxDist=float(line[10]), x0=float(line[11]),
-                                      y0=float(line[12]), z0=float(line[13]), x1=float(line[14]),
-                                      y1=float(line[15]),
-                                      z1=float(line[16]), x2=float(line[17]), y2=float(line[18]),
-                                      z2=float(line[19]))
-                protein.protein_id = protein_ID
-                protein.save()
+                max_dist = float(line[10])
+                if max_dist <= 6:
+                    protein = AllProteins(protein_key=int(line[0]), aacd0=str(line[1]), position0=int(line[2]),
+                                          aacd1=str(line[3]), position1=int(line[4]), aacd2=str(line[5]),
+                                          position2=int(line[6]), classT1=int(line[7]), theta=float(line[8]),
+                                          classL1=int(line[9]), maxDist=max_dist, x0=float(line[11]),
+                                          y0=float(line[12]), z0=float(line[13]), x1=float(line[14]),
+                                          y1=float(line[15]), z1=float(line[16]), x2=float(line[17]),
+                                          y2=float(line[18]), z2=float(line[19]))
+                    protein.protein_id = protein_ID
+                    protein.save()
 
 
 def similarity_data(request):

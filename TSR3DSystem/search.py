@@ -3,6 +3,7 @@ from collections import Counter
 from itertools import combinations
 
 from django.db.models import Q
+from django.db.models.aggregates import Count
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView
 from django.template.response import TemplateResponse
@@ -32,9 +33,9 @@ def search_by_protein_id(request):
 
     context['protein_list'] = user_protein_list
 
-    query = """SELECT keys.protein_key AS id, COUNT(keys.protein_key) AS key_count FROM 
+    query = """SELECT keys.protein_key AS id, COUNT(keys.protein_key) AS key_count FROM
                (SELECT DISTINCT ON ("{0}_allproteins"."protein_key", "{0}_allproteins"."protein_id_id")
-               "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE "{0}_allproteins"."protein_id_id" 
+               "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE "{0}_allproteins"."protein_id_id"
                IN {1} ) AS keys GROUP BY keys.protein_key HAVING COUNT(keys.protein_key) >= {2}""".format(
         settings.APP_MODEL_NAME,
         str(tuple(user_protein_list)),
@@ -50,25 +51,80 @@ def search_by_protein_id(request):
 
     proteins = user_protein_list
 
-    if len(protein_key_list) is 0:
-        sub_query = """ SELECT protein.protein_id_id FROM (SELECT DISTINCT ON ("{0}_allproteins"."protein_key", 
+    if len(protein_key_list) != 0:
+        sub_query = """ SELECT protein.protein_id_id AS id FROM (SELECT DISTINCT ON ("{0}_allproteins"."protein_key",
                         "{0}_allproteins"."protein_id_id") "{0}_allproteins"."protein_id_id",
-                        "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE 
-                        "{0}_allproteins"."protein_key" IN {1}) AS protein GROUP BY protein.protein_id_id 
-                        HAVING COUNT(protein.protein_id_id) >= {2}; """.format(
+                        "{0}_allproteins"."protein_key" FROM "{0}_allproteins" WHERE  "{0}_allproteins"."protein_id_id"
+                        NOT IN {1} AND "{0}_allproteins"."protein_key" IN {2}) AS protein GROUP BY protein.protein_id_id
+                        HAVING COUNT(protein.protein_id_id) >= {3}; """.format(
             settings.APP_MODEL_NAME,
+            tuple(proteins),
             str(tuple(protein_key_list)),
             len(protein_key_list),
         )
 
         similar_proteins = AllProteins.objects.raw(sub_query)
-        proteins = proteins.append([each.id for each in similar_proteins])
+        proteins.__add__([each.pk for each in similar_proteins])
 
     context['common_keys'] = protein_key_list
     context['proteins'] = proteins
     context['time'] = round(time.clock() - start, 4)
     context.update(nav_bar())
     return TemplateResponse(request, 'search/search_by_pid_result.html', context)
+
+# def search_by_protein_id(request):
+#     """
+#     TITLI'S CODE THAT DOES NOT MAKE SURE THAT IT EXISTS WITHIN ALL PROTEINS SELECTED
+#     """
+#     start = time.clock()
+#     context = {}
+#     protein_key_list = []
+#     user_protein_list = request.POST.getlist("list3")
+#
+#     if not user_protein_list and "small_table" in request.POST:
+#         user_protein_list = ['1a06', '1muo']
+#
+#     context['protein_list'] = user_protein_list
+#
+#     protein_key_queryset = AllProteins.objects.filter(
+#         protein_id_id__in=user_protein_list) \
+#         .distinct() \
+#         .values('protein_key') \
+#         .annotate(key_count=Count('protein_key')) \
+#         .filter(key_count__gte=len(user_protein_list)) \
+#         .order_by('protein_key')
+#
+#
+#     for query in protein_key_queryset:
+#         protein_key_list.append(query.get('protein_key'))
+#
+#     sub_query = AllProteins.objects.filter(
+#         protein_key__in=protein_key_list) \
+#         .distinct() \
+#         .values_list('protein_id_id', 'protein_key')
+#
+#     sub_query_list = [entry for entry in sub_query]
+#     d = {}
+#     cnt = Counter(elem[0] for elem in sub_query_list)
+#     for key, value in cnt.items():
+#         d[key] = value
+#
+#
+#     pro_list = filter(lambda x: x[1] >= len(protein_key_list), d.items())
+#
+#     proteins = []
+#     for i in range(len(pro_list)):
+#         proteins.append(pro_list[i][0])
+#
+#     if protein_key_list and len(pro_list) < len(user_protein_list):
+#         proteins = user_protein_list
+#
+#     context['common_keys'] = protein_key_list
+#     context['proteins'] = proteins
+#     context['protein_key_list'] = protein_key_list
+#     end = time.clock()
+#     context['time'] = round(end - start, 4)
+#     return TemplateResponse(request, 'search/search_by_pid_result.html', context)
 
 
 class SearchProteinKey(TemplateView):
