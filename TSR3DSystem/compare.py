@@ -37,13 +37,10 @@ def compare_by_protein_id_result(request):
         # if protein_compared not in protein_list:
         #     protein_list.append(protein_compared)
 
-        similarity_info_queryset = Comparison.objects.filter(
-            Q(protein_one=protein_compared) | Q(protein_two=protein_compared))
-
         for protein in protein_list:
-            queryset = similarity_info_queryset.filter(Q(protein_one=protein) | Q(protein_two=protein))
+            queryset = Comparison.objects.filter(Q(protein_one=protein_compared) | Q(protein_two=protein_compared))
 
-            if not similarity_info_queryset or protein == protein_compared:
+            if protein == protein_compared:
                 continue
 
             similarity_value = queryset[0].similarity_value
