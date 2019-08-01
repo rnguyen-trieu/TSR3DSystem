@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Search by Protein ID{% endblock %}
+
+{% block header_title %}
+<h2 class="wow fadeInDown">
+    <i class="fa fa-search"></i> Local Similarity Search by Protein ID
+</h2>
+{% endblock %}
+
+{% block content %}
+<br/><br/>
+<form name="displayform" method="POST" action="{% url 'retrieve_protein_results' %}">
+    {% csrf_token %}
+    <div class="centered">
+        <h4>Select the PDB ID you want to retrieve: </h4>
+        <code>Input the max distance you would like to retrieve</code>
+    </div><!--centered-->
+    <br/><br/>
+    <div class="centered">
+        <select id="protein_list" name="protein" size=10 style="min-width: 500px" onclick='list3Changed(this.value);'>
+            {% for protein in object_list %}
+            <option value="{{ protein.pk }}" >{{ protein.pk }}</option>
+            {% empty %}
+            <option value="">Failed to fetch values from database</option>
+            {% endfor %}
+	    </select>
+        <br/><br/>
+        <input class="form-control" type="number" name="max_distance" max="30" style="min-width: 500px" placeholder="Max Distance">
+        <p id="demo3"></p>
+        <br/><br/>
+        <div class="row">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-arrow-circle-down"></i> Retrieve
+            </button>
+        </div><!--row-->
+    </div><!--centered-->
+</form>
+<br/><br/>
+<div class="row">
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i>
+        Our protein table contains TSR keys which is selected based on two conditions: 
+        Mean Absolute Deviation &#60;= 0.01 and Document Frequency &#60; 6</br/>
+    </div><!--alert-->
+</div><!--row-->
+{% endblock %}
+
+
+
+{% block javascript %}
+<script type="text/javascript">
+
+function list3Changed()
+    {
+      var str="",i;
+      for (i=0;i<displayform.protein_list.options.length;i++) {
+          if (displayform.protein_list.options[i].selected) {
+              str = str + '<span class="badge badge1">'
+                  + displayform.protein_list.options[i].value + '</span> ';
+          }
+      }
+      document.getElementById("demo3").innerHTML = 'Selected choice from list: '+ str;
+    }
+
+</script>
+{% endblock %}

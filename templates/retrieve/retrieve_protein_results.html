@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load i18n %} {% load staticfiles %}
+{% block title %}Similarity values of proteins being compared{% endblock %}
+
+{% block header_title %}
+<h2 align="center"><i class="fa fa-line-chart"></i> Global Similarity Search Results</h2>
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="alert alert-info">
+    <i class="fa fa-info-circle"></i> Query Search time: {{ time }} seconds
+</div> <!-- alert -->
+
+<h2>Retrieved protein {{ protein }} with the max distance {{ max_distance }}</h2>
+<h4>Similarity Values are shown below:</h4>
+
+{% if no_result_found %}
+<div class="row">
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle"></i> No matching results found in the Database
+    </div><!--alert alert-success-->
+</div><!--row-->
+{% else %}
+<div clas="table-responsive">
+    <table id="similarityTable" class="table table-bordered table-striped table-hover">
+    </table>
+</div> <!--table-responsive-->
+{% endif %}
+<br/><br/>
+{% endblock  %}
+
+
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript">
+var proteins = [
+{% for protein in full_protein %}
+[
+    "{{ protein.protein_key }}", "{{ protein.key_occurrence }}",
+    "{{ protein.aacd0}}", "{{ protein.position0 }}",
+    "{{ protein.aacd1 }}", "{{ protein.position1 }}",
+    "{{ protein.aacd2 }}", "{{ protein.position2 }}",
+    "{{ protein.classT1 }}", "{{ protein.theta }}",
+    "{{ protein.classL1}}", "{{ protein.maxDist }}",
+    "{{ protein.x0 }}", "{{ protein.y0 }}",
+    "{{ protein.z0 }}", "{{ protein.x1 }}",
+    "{{ protein.y1 }}", "{{ protein.z1 }}",
+    "{{ protein.x2 }}", "{{ protein.y2 }}",
+    "{{ protein.z2 }}",
+],
+{% endfor %}];
+console.log(proteins);
+$(document).ready(function(){
+    $('#similarityTable').dataTable({
+        data: proteins,
+        columns: [
+            {title: "Protein Key"},
+            {title: "Key Occurence"},
+            {title: "AACD 0"},
+            {title: "Postion 0"},
+            {title: "AACD 1"},
+            {title: "Postion 1"},
+            {title: "AACD 2"},
+            {title: "Postion 2"},
+            {title: "Class T1"},
+            {title: "Theta"},
+            {title: "Class L1"},
+            {title: "Max Distance"},
+            {title: "X0"},
+            {title: "Y0"},
+            {title: "Z0"},
+            {title: "X1"},
+            {title: "Y1"},
+            {title: "Z1"},
+            {title: "X2"},
+            {title: "Y2"},
+            {title: "Z2"},
+        ]
+    });
+});
+</script>
+{% endblock %}

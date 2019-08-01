@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import compare, search
+from . import compare, search, retrieve
 from .core import insert, views
 
 urlpatterns = [
@@ -31,6 +31,9 @@ urlpatterns = [
     path('compare/byprotienid/result/', compare.compare_by_protein_id_result, name='compare_by_pid_result'),
     path('compare/byhierarchy/', compare.CompareByHierarchy.as_view(), name="compare_by_hl_home"),
     path('compare/byhierarchy/result/', compare.compare_by_hierarchy_result, name='compare_by_hl_result'),
+
+    path('retrieve/proteinid/', retrieve.RetrieveProteinByID.as_view(), name="retrieve_protein_home"),
+    path('retrieve/proteinid/result/', retrieve.retrieve_by_protein_id, name='retrieve_protein_results'),
 
     path('search/proteinid/', search.SearchByProteinID.as_view(), name="search_by_pid_home"),
     path('search/proteinid/result/', search.search_by_protein_id, name='search_by_pid_result'),
