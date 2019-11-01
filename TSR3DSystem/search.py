@@ -10,6 +10,7 @@ from django.template.response import TemplateResponse
 
 from .core import settings
 from .core.views import nav_bar
+from .forms import ClassMaxDistance
 from .models import AllProteins, Hierarchy
 
 
@@ -153,9 +154,9 @@ class SearchByProteinIDAndSeq(TemplateView):
         all_seq_list = []
         for protein in protein_list:
             protein_seq_list = []
-            seq_id_queryset = POSITION_INFORMATION.objects.filter(
-                Q(Protein_ID=protein)) \
-                .values('Seq_ID')
+            seq_id_queryset = Position.objects.filter(
+                Q(protein_id=protein)) \
+                .values('seq_id')
             for seq_dict in seq_id_queryset:
                 for key, value in seq_dict.items():
                     protein_seq_list.append(int(value))
@@ -227,3 +228,19 @@ def search_by_protein_id_seq_step2(request):
     context['time'] = round(end - start, 4)
     context.update(nav_bar())
     return TemplateResponse(request, 'search/search_by_pid_seq_search_result.html', context)
+
+
+def search_by_class_keyfrequency(request):
+    """
+    Input: A selected class, max distance for keys, and
+    Output: Classes that support the min
+    list of all protein_ids having it and other details too
+    """
+
+    if request.method == "POST":
+        key_frequency_form = ClassMaxDistance(request.POST)
+    else:
+        key_frequency_form = ClassMaxDistance()
+
+    context = {'form': key_frequency_form}
+    return TemplateResponse(request, 'search/search_by_class_maxdist.html', context)

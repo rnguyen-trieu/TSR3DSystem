@@ -41,4 +41,7 @@ urlpatterns = [
     path('search/protenid-seq/seq/result/', search.search_by_protein_id_seq_step2, name='search_by_pid_seq_search_result'),
     path('search/proteinkey/(<pk>[0-9]+)/', search.SearchProteinKey.as_view(), name="search_protein_key"),
 
+    # Key Frequency
+    path('search/key-frequency/', search.search_by_class_keyfrequency, name="search_class_maxdist"),
+
 ]

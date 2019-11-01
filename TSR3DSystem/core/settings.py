@@ -75,14 +75,55 @@ WSGI_APPLICATION = 'TSR3DSystem.core.wsgi.application'
 
 DATABASES = {
     'default': {
+    },
+    'Kinase': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'protein_small_test',
-        'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': 'TSR3D_Kinase',
+        'USER': 'richn',
+        'PASSWORD': 'komiisawsome',
+        'HOST': 'tsr3dsystem.cmix.louisiana.edu',
+    },
+    'Phosphatase': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'TSR3D_Phosphatase',
+        'USER': 'richn',
+        'PASSWORD': 'komiisawsome',
+        'HOST': 'tsr3dsystem.cmix.louisiana.edu',
+    },
+    'Protease': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'TSR3D_Protease',
+        'USER': 'richn',
+        'PASSWORD': 'komiisawsome',
+        'HOST': 'tsr3dsystem.cmix.louisiana.edu',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django_cassandra_engine',
+#         'NAME': 'db',
+#         'TEST_NAME': 'Test Cluster',
+#         'HOST': '192.168.1.227 ',
+#         'OPTIONS': {
+#             'replication': {
+#                 'strategy_class': 'SimpleStrategy',
+#                 'replication_factor': 1
+#             },
+#             # 'connection': {
+#             #     'consistency': ConsistencyLevel.LOCAL_ONE,
+#             #     'retry_connect': True
+#             #     # + All connection options for cassandra.cluster.Cluster()
+#             # },
+#             # 'session': {
+#             #     'default_timeout': 10,
+#             #     'default_fetch_size': 10000
+#             #     # + All options for cassandra.cluster.Session()
+#             # }
+#         }
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

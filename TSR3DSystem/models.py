@@ -58,12 +58,11 @@ class Comparison(models.Model):
     similarity_value = models.FloatField()
 
 # class Position(models.Model):
-#     Protein_ID = models.ForeignKey(
-#         PROTEIN_HIERARCHY,
-#         to_field='Protein_ID',
+#     protein_id = models.ForeignKey(
+#         Hierarchy,
 #         on_delete=models.CASCADE)
-#     AminoAcid_Name = models.CharField(max_length=20)
-#     Seq_ID = models.CharField(max_length=5, null=True)
-#     X_COORD = models.FloatField(default=0.0)
-#     Y_COORD = models.FloatField(default=0.0)
-#     Z_COORD = models.FloatField(default=0.0)
+#     amino_acid_name = models.CharField(max_length=20)
+#     seq_id = models.CharField(max_length=5, null=True)
+#     x_coord = models.FloatField(default=0.0)
+#     y_coord = models.FloatField(default=0.0)
+#     z_coord = models.FloatField(default=0.0)
