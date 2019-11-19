@@ -10,8 +10,7 @@
 
 {% block content %}
     <br/><br/>
-    <form name="displayform" method="POST" action="{% url 'search_by_pid_result' %}"
-          onsubmit="return select_validation()">
+    <form name="displayform" method="POST">
         {% csrf_token %}
 
         <div class="centered">
@@ -58,6 +57,11 @@
 
 
 {% block javascript %}
+    {% if valid %}
+        <script>
+        swal({icon:'success', text: "Thank you! We will email you with the results as soon as its been processed. Plexpect at least 48 hours.", button: false});
+        </script>
+    {% endif %}
     <script type="text/javascript">
 
         function list3Changed() {

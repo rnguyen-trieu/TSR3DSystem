@@ -237,10 +237,12 @@ def search_by_class_keyfrequency(request):
     list of all protein_ids having it and other details too
     """
 
+    context = {}
+    key_frequency_form = ClassMaxDistance()
     if request.method == "POST":
         key_frequency_form = ClassMaxDistance(request.POST)
-    else:
-        key_frequency_form = ClassMaxDistance()
+        if key_frequency_form.is_valid():
+            context.update({'valid': True})
 
-    context = {'form': key_frequency_form}
+    context.update({'form': key_frequency_form})
     return TemplateResponse(request, 'search/search_by_class_maxdist.html', context)
