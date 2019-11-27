@@ -14,8 +14,10 @@ class ClassMaxDistance(forms.Form):
     max_distance = forms.IntegerField(required=True, max_value=20, min_value=6)
     protein_class = forms.ChoiceField(choices=get_class_choices(), required=True)
     email = forms.EmailField(required=True)
-    min_support = forms.FloatField(max_value=1, min_value=0.80, required=True)
-    min_confidence = forms.FloatField(max_value=1, min_value=0.80, required=True)
+    # min_support = forms.FloatField(max_value=1, min_value=0.80, required=True)
+    min_support = forms.FloatField(max_value=1, min_value=0.00, required=True)
+    # min_confidence = forms.FloatField(max_value=1, min_value=0.80, required=True)
+    min_confidence = forms.FloatField(max_value=1, min_value=0.00, required=True)
 
     def clean(self):
         cleaned_data = super().clean()
