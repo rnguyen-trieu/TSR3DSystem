@@ -14,10 +14,7 @@ from ..models import AllProteins, Hierarchy
 
 
 def data_generator(filename):
-    """
-    Data generator, needs to return a generator to be called several times.
-    """
-
+    """Data generator, needs to return a generator to be called several times."""
     def data_gen():
         with open(filename) as file:
             for line in file:
@@ -53,34 +50,45 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
     itemsets, rules = apriori(key_csv, min_support=min_support, min_confidence=min_confidence)
     print(itemsets)
 
-
-    # Switch to other  databases and filter them - OBSOLETE
-    # for each in DATABASES:
-        # if each == 'default':
-        #     continue
-        # keys.append(
-            # (tuple(AllProteins.objects.using(each).filter(protein_key__in=filtered_keys).values_list('protein_key',
-            #                                                                                          flat=True).distinct())))
-
     # FP Growth Portion
     # patterns = pyfpgrowth.find_frequent_patterns(keys, min_support)
     # rules = pyfpgrowth.generate_association_rules(patterns, min_confidence)
     # print(patterns)
-    # print(rules)
 
     # Search Classes with Apriori Results
     filtered_dict = {}
     for itemset in itemsets:
         for item in itemsets[itemset]:
-            classes = ''
-            for each in DATABASES:
-                if each == 'default':
-                    continue
-                for protein_key in item:
-                    exists = AllProteins.objects.using(each).filter(protein_key=protein_key).exists()
-                    if exists:
-                        classes += each+', '
+            classes = {}
+            for class_name in DATABASES:
+                # if each == 'default':
+                #     continue
+
+                item_set_list = [protein_key[:-2] for protein_key in item]
+                # when filtering 4 lines below might need to make it unique for faster processing
+
+                counted_item_set_list = Counter(item_set_list)
+                protein_itemset_list = []
+                for protein in Hierarchy.objects.using(class_name).all():
+                    protein_key_list = AllProteins.objects.using(class_name).filter(protein_key__in=item_set_list,
+                                                                                    protein_id_id=protein.pk).values_list(
+                                                                                    'protein_key', flat=True)
+                    protein_key_counter = Counter(protein_key_list)
+
+                    count_checker = Counter(
+                        {key: protein_key_counter[int(key)] - value for key, value in counted_item_set_list.items()})
+
+                    # Checks to make sure that it has all of the keys.
+                    # If there are any negative values than it does not have all of the items in the itemset
+                    protein_has_set = not any(elem < 0 for elem in count_checker.values())
+
+                    if protein_has_set:
+                        protein_itemset_list.append(protein.pk)
+                if len(protein_itemset_list)/Hierarchy.objects.using(class_name).count() >= min_support:
+                    classes.update({class_name: protein_itemset_list})
             filtered_dict.update({str(item): classes})
+    print(filtered_dict)
+
 
     # Email user results
     # send_mail(
