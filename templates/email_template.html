@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<table cellpadding="0" cellspacing="0" width="640" align="center" border="1">
+    <tr>
+        <td>
+            {% for itemsets, values in filtered_dict.items %}
+                {% for class, perc_proteins in values.items %}
+                    {%  for percentage, proteins in perc_proteins.items %}
+                        <table cellpadding="0" cellspacing="0" align="left" border="1">
+                            <tr>
+                                {{ itemsets }}
+                            </tr>
+                            <tr>
+                                {{ class }}
+                            </tr>
+                            <tr>
+                                {{ percentage }}
+                            </tr>
+                            <tr>
+                                {{ proteins }}
+                            </tr>
+                        </table>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+</body>
+</html>

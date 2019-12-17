@@ -11,6 +11,8 @@ from collections import Counter
 
 from .settings import DATABASES
 from ..models import AllProteins, Hierarchy
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 def data_generator(filename):
@@ -84,19 +86,30 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
 
                     if protein_has_set:
                         protein_itemset_list.append(protein.pk)
-                if len(protein_itemset_list)/Hierarchy.objects.using(class_name).count() >= min_support:
-                    classes.update({class_name: protein_itemset_list})
+                # if len(protein_itemset_list)/Hierarchy.objects.using(class_name).count() >= min_support:
+                #     classes.update({class_name: protein_itemset_list})
+                percentage = len(protein_itemset_list)/Hierarchy.objects.using(class_name).count()
+                if percentage >= min_support:
+                    classes.update({class_name: {'percentage': percentage, 'proteins': protein_itemset_list}})
             filtered_dict.update({str(item): classes})
     print(filtered_dict)
 
+    msg_html = render_to_string('email_template.html', {'filtered_dict': filtered_dict})
+
+    send_mail(
+        'TSR3DSystem Results',
+        '',
+        settings.EMAIL_HOST_USER,
+        [email],
+        html_message=msg_html,
+        fail_silently=False,
+    )
 
     # Email user results
     # send_mail(
     #     'TSR3DSystem Results',
-    #     [str(itemsets), str(rules), str(classes)],
-    #     #'akomebaby@yahoo.com',
+    #     str(filtered_dict),
     #     settings.EMAIL_HOST_USER,
     #     [email],
     #     fail_silently=False,
     # )
-    print('send email here')
