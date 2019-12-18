@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<table cellpadding="0" cellspacing="0" width="640" align="center" border="1">
+
+<h4>Total Time: {{ time }}</h4>
+<p>Protein Class Selected: {{ protein_class }}</p>
+<p>Maximum Distance: {{ max_distance }}</p>
+<p>Minimum Support: {{ min_support }}</p>
+<p>Minimum Confidence: {{ min_confidence }}</p>
+
+<table cellpadding="1" cellspacing="0" border="1">
     <tr>
-        <td>
-            {% for itemsets, values in filtered_dict.items %}
-                {% for class, perc_proteins in values.items %}
-                    {%  for percentage, proteins in perc_proteins.items %}
-                        <table cellpadding="0" cellspacing="0" align="left" border="1">
-                            <tr>
-                                {{ itemsets }}
-                            </tr>
-                            <tr>
-                                {{ class }}
-                            </tr>
-                            <tr>
-                                {{ percentage }}
-                            </tr>
-                            <tr>
-                                {{ proteins }}
-                            </tr>
-                        </table>
-                    {% endfor %}
+        <td></td>
+        {% for class in protein_classes %}
+            <th scope="col">{{ class }}</th>
+            <th></th>
+        {% endfor %}
+    </tr>
+
+    {% for itemsets, values in filtered_dict.items %}
+        <tr>
+            <th scope="row">{{ itemsets }}</th>
+            {% for class, perc_proteins in values.items %}
+                {% for key, value in perc_proteins.items %}
+                    <td>{{ value }}</td>
                 {% endfor %}
             {% endfor %}
-        </td>
-    </tr>
+        </tr>
+    {% endfor %}
 </table>
 </body>
 </html>

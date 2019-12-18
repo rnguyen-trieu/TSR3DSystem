@@ -1,4 +1,5 @@
 import csv
+import time
 import uuid
 import pyfpgrowth
 from background_task import background
@@ -27,6 +28,8 @@ def data_generator(filename):
 
 # @background()
 def class_filter(email, protein_class, max_distance, min_support, min_confidence):
+    start = time.clock()
+
     transactions = {}
     for each in Hierarchy.objects.using(protein_class).all():
         transactions.update({each.pk: list((str(key) for key in AllProteins.objects.using(protein_class).filter(
@@ -58,13 +61,17 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
     # print(patterns)
 
     # Search Classes with Apriori Results
+    protein_classes = [class_name for class_name in DATABASES if class_name != 'default' and class_name != protein_class ]
+
+    iter_itemsets = iter(itemsets)
+    next(iter_itemsets)
+    next(iter_itemsets)
+
     filtered_dict = {}
-    for itemset in itemsets:
+    for itemset in iter_itemsets:
         for item in itemsets[itemset]:
             classes = {}
-            for class_name in DATABASES:
-                # if each == 'default':
-                #     continue
+            for class_name in protein_classes:
 
                 item_set_list = [protein_key[:-2] for protein_key in item]
                 # when filtering 4 lines below might need to make it unique for faster processing
@@ -86,15 +93,21 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
 
                     if protein_has_set:
                         protein_itemset_list.append(protein.pk)
-                # if len(protein_itemset_list)/Hierarchy.objects.using(class_name).count() >= min_support:
-                #     classes.update({class_name: protein_itemset_list})
-                percentage = len(protein_itemset_list)/Hierarchy.objects.using(class_name).count()
-                if percentage >= min_support:
-                    classes.update({class_name: {'percentage': percentage, 'proteins': protein_itemset_list}})
+                # percentage = len(protein_itemset_list)/Hierarchy.objects.using(class_name).count()
+                # if percentage >= min_support:
+                #     classes.update({class_name: {'percentage': percentage, 'proteins': protein_itemset_list}})
+                classes.update({class_name: {'percentage': len(protein_itemset_list)/Hierarchy.objects.using(class_name).count(),
+                                             'proteins': protein_itemset_list}})
             filtered_dict.update({str(item): classes})
     print(filtered_dict)
 
-    msg_html = render_to_string('email_template.html', {'filtered_dict': filtered_dict})
+    msg_html = render_to_string('email_template.html', {'filtered_dict': filtered_dict,
+                                                        'protein_classes': protein_classes,
+                                                        'time': round(time.clock() - start, 4),
+                                                        'protein_class': protein_class,
+                                                        'max_distance': max_distance,
+                                                        'min_support': min_support,
+                                                        'min_confidence': min_confidence})
 
     send_mail(
         'TSR3DSystem Results',
@@ -104,12 +117,3 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
         html_message=msg_html,
         fail_silently=False,
     )
-
-    # Email user results
-    # send_mail(
-    #     'TSR3DSystem Results',
-    #     str(filtered_dict),
-    #     settings.EMAIL_HOST_USER,
-    #     [email],
-    #     fail_silently=False,
-    # )

@@ -6,6 +6,8 @@ from django import forms
 def get_class_choices():
     classes = []
     for each in settings.DATABASES:
+        if each == 'default':
+            continue
         classes.append((each, each))
     return classes
 
