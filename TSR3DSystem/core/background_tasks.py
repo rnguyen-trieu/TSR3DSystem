@@ -15,6 +15,8 @@ from ..models import AllProteins, Hierarchy
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
+import os
+
 
 def data_generator(filename):
     """Data generator, needs to return a generator to be called several times."""
@@ -58,7 +60,7 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
     # Search Classes with Apriori Results
     protein_classes = [class_name for class_name in DATABASES if class_name != 'default' and class_name != protein_class ]
 
-    if len(itemsets) != 0:
+    if len(itemsets) > 1:
         iter_itemsets = iter(itemsets)
         next(iter_itemsets)
         next(iter_itemsets)
@@ -129,3 +131,6 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
             [email],
             fail_silently=False,
         )
+
+    os.remove(file_name+'.csv')
+    print("File Removed!")
