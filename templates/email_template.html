@@ -10,25 +10,9 @@
 <p>Minimum Support: {{ min_support }}</p>
 <p>Minimum Confidence: {{ min_confidence }}</p>
 
-<table cellpadding="1" cellspacing="0" border="1">
-    <tr>
-        <td></td>
-        {% for class in protein_classes %}
-            <th scope="col">{{ class }}</th>
-            <th></th>
-        {% endfor %}
-    </tr>
 
-    {% for itemsets, values in filtered_dict.items %}
-        <tr>
-            <th scope="row">{{ itemsets }}</th>
-            {% for class, perc_proteins in values.items %}
-                {% for key, value in perc_proteins.items %}
-                    <td>{{ value }}</td>
-                {% endfor %}
-            {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
+{{ filtered_dict|safe }}
+
+
 </body>
 </html>
