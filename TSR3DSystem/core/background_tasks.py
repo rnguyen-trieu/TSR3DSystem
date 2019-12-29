@@ -136,7 +136,7 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
 
 
 from mlxtend.preprocessing import TransactionEncoder
-from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import apriori, fpgrowth
 
 def class_filter(email, protein_class, max_distance, min_support, min_confidence):
     start = time.clock()
@@ -161,7 +161,16 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
     transactions = pd.DataFrame(te_ary, columns=te.columns_)
 
     # Pass through Apriori
-    frequent_itemsets = apriori(transactions, min_support=min_support, use_colnames=True, low_memory=True)
+    # algorithm = "Apriori"
+    # frequent_itemsets = apriori(transactions, min_support=min_support, use_colnames=True, low_memory=True)
+    # frequent_itemsets['length'] = frequent_itemsets['itemsets'].apply(lambda x: len(x))
+    # frequent_itemsets = frequent_itemsets[frequent_itemsets.length > 2]
+    # frequent_itemsets.drop(columns=['support', 'length'])
+    # print(frequent_itemsets)
+
+    # Pass through FPGrowth
+    algorithm = "FPGrowth"
+    frequent_itemsets = fpgrowth(transactions, min_support=min_support, use_colnames=True)
     frequent_itemsets['length'] = frequent_itemsets['itemsets'].apply(lambda x: len(x))
     frequent_itemsets = frequent_itemsets[frequent_itemsets.length > 2]
     frequent_itemsets.drop(columns=['support', 'length'])
@@ -216,7 +225,8 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
                                                             'protein_class': protein_class,
                                                             'max_distance': max_distance,
                                                             'min_support': min_support,
-                                                            'min_confidence': min_confidence})
+                                                            'min_confidence': min_confidence,
+                                                            'algorithm': algorithm})
         send_mail(
             'TSR3DSystem Results',
             '',
