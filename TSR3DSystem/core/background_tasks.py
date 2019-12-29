@@ -211,12 +211,24 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
 
                     if protein_has_set:
                         protein_itemset_list.append(protein.pk)
-                classes.update({class_name: len(protein_itemset_list)/Hierarchy.objects.using(class_name).count(),
-                                class_name + '_proteins': protein_itemset_list})
+                class_support = len(protein_itemset_list)/Hierarchy.objects.using(class_name).count()
+                if class_support >= min_confidence:
+                    classes.update({class_name: len(protein_itemset_list)/Hierarchy.objects.using(class_name).count(),
+                                    class_name + '_proteins': [str(protein_itemset_list)[1:-1]]})
+                else:
+                    classes.update({class_name: ['-'],
+                                    class_name + '_proteins': ['-']})
             classes.update({'ItemSets: Count': str(counted_item_set_list)[7:]})
             df = df.append(pd.DataFrame(classes), ignore_index=True, sort=False)
-        df[float_columns] = df[float_columns].astype('float32')
 
+        rows_to_drop = []
+        for index, row in df.iterrows():
+            for column in float_columns:
+                if row[column] != '-':
+                    break
+                if column == float_columns[-1]:
+                    rows_to_drop.append(index)
+        df = df.drop(rows_to_drop)
         print(df.to_html)
 
         msg_html = render_to_string('email_template.html', {'filtered_dict': df.to_html,
@@ -243,4 +255,3 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
             [email],
             fail_silently=False,
         )
-# http://rasbt.github.io/mlxtend/user_guide/frequent_patterns/apriori/#api
