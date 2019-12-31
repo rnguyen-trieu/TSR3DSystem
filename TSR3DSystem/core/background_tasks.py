@@ -1,6 +1,9 @@
 import csv
 import time
 import uuid
+import os
+import psutil
+import sys
 import pandas as pd
 from background_task import background
 
@@ -10,13 +13,20 @@ from efficient_apriori import apriori
 from django.conf import settings
 from collections import Counter
 
+from memory_profiler import profile
+
 from .settings import DATABASES
 from ..models import AllProteins, Hierarchy
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-import os
 
+
+def memory_usage_psutil():
+    # return the memory usage in MB
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info()[0] / float(2 ** 20)
+    return mem
 
 def data_generator(filename):
     """Data generator, needs to return a generator to be called several times."""
@@ -29,6 +39,7 @@ def data_generator(filename):
 
 
 # @background()
+@profile
 def class_filter(email, protein_class, max_distance, min_support, min_confidence):
     start = time.clock()
 
@@ -106,7 +117,6 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
             df[float_columns] = df[float_columns].astype('float32')
 
         print(df.to_html)
-
         msg_html = render_to_string('email_template.html', {'filtered_dict': df.to_html,
                                                             'protein_classes': protein_classes,
                                                             'time': round(time.clock() - start, 4),
@@ -132,5 +142,7 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
             fail_silently=False,
         )
 
-    os.remove(file_name+'.csv')
+    #memory_usage_psutil()
+    #os.remove(file_name+'.csv')
     print("File Removed!")
+
