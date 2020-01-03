@@ -1,8 +1,13 @@
 import csv
 import time
 import uuid
+import os
+import psutil
+import sys
 import pandas as pd
 from collections import Counter
+
+from memory_profiler import profile
 
 from .settings import DATABASES
 from ..models import AllProteins, Hierarchy
@@ -111,7 +116,6 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
                     rows_to_drop.append(index)
         df = df.drop(rows_to_drop)
         print(df.to_html)
-
         msg_html = render_to_string('email_template.html', {'filtered_dict': df.to_html,
                                                             'protein_classes': protein_classes,
                                                             'time': round(time.clock() - start, 4),
