@@ -72,7 +72,6 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
         column_names = ['ItemSets: Count']
         [column_names.extend([x, x + '_proteins']) for x in protein_classes]
         df = pd.DataFrame(columns=column_names)
-        float_columns = [column for column in column_names[1::2]]
 
         for itemset in frequent_itemsets['itemsets']:
             classes = {}
@@ -103,19 +102,16 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
                                     class_name + '_proteins': [str(protein_itemset_list)[1:-1]]})
                 else:
                     classes.update({class_name: ['-'],
-                                    class_name + '_proteins': ['-']})
-            classes.update({'ItemSets: Count': str(counted_item_set_list)[7:]})
-            df = df.append(pd.DataFrame(classes), ignore_index=True, sort=False)
-
-        rows_to_drop = []
-        for index, row in df.iterrows():
-            for column in float_columns:
-                if row[column] != '-':
+                                    class_name + '_proteins': '-'})
+            valid_line = False
+            for value in list(classes.values())[::2]:
+                if type(value) == float:
+                    valid_line = True
                     break
-                if column == float_columns[-1]:
-                    rows_to_drop.append(index)
-        df = df.drop(rows_to_drop)
-        print(df.to_html)
+            if valid_line:
+                classes.update({'ItemSets: Count': str(counted_item_set_list)[7:]})
+                df = df.append(pd.DataFrame(classes), ignore_index=True, sort=False)
+
         msg_html = render_to_string('email_template.html', {'filtered_dict': df.to_html,
                                                             'protein_classes': protein_classes,
                                                             'time': round(time.clock() - start, 4),
@@ -128,7 +124,7 @@ def class_filter(email, protein_class, max_distance, min_support, min_confidence
                                                             }
                                     )
         send_mail(
-            'TSR3DSystem Results',
+            'TSR3DSystem Results'.format(),
             '',
             settings.EMAIL_HOST_USER,
             [email],
