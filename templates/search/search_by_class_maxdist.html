@@ -4,7 +4,7 @@
 
 {% block header_title %}
     <h2 class="wow fadeInDown">
-        <i class="fa fa-search"></i> Local Similarity Search by Protein ID
+        <i class="fa fa-search"></i> Class Associations
     </h2>
 {% endblock %}
 
@@ -14,8 +14,8 @@
         {% csrf_token %}
 
         <div class="centered">
-            <h4>Select PDB IDs you want to search for common keys: </h4>
-            <code>Press CTRL and click to select multiple from the list</code>
+            <h4>Enter Tuning Parameters: </h4>
+            <code>Results will be emailed</code>
         </div><!--centered-->
         <br/><br/>
         <div class="centered">
@@ -47,9 +47,14 @@
     <br/><br/>
     <div class="row">
         <div class="alert alert-info">
+<!--            <i class="fa fa-info-circle"></i>-->
+<!--            Our protein table contains TSR keys which is selected based on two conditions:-->
+<!--            Mean Absolute Deviation &#60;= 0.01 and Document Frequency &#60; 6</br/>-->
             <i class="fa fa-info-circle"></i>
-            Our protein table contains TSR keys which is selected based on two conditions:
-            Mean Absolute Deviation &#60;= 0.01 and Document Frequency &#60; 6</br/>
+            Tuning Intervals ---->
+            Max distance: 6 - 20;
+            Min Support: 0 - 1;
+            Min Confidence: 0 - 1</br/>
         </div><!--alert-->
     </div><!--row-->
 {% endblock %}
