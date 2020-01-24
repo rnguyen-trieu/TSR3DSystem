@@ -18,8 +18,6 @@ class ClassMaxDistance(forms.Form):
     email = forms.EmailField(required=True)
     # min_support = forms.FloatField(max_value=1, min_value=0.80, required=True)
     min_support = forms.FloatField(max_value=1, min_value=0.00, required=True)
-    # min_confidence = forms.FloatField(max_value=1, min_value=0.80, required=True)
-    min_confidence = forms.FloatField(max_value=1, min_value=0.00, required=True)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -28,5 +26,4 @@ class ClassMaxDistance(forms.Form):
                                       cleaned_data.get('protein_class'),
                                       cleaned_data.get('max_distance'),
                                       cleaned_data.get('min_support'),
-                                      cleaned_data.get('min_confidence'),
                                       )
