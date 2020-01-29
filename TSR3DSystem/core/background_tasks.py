@@ -112,7 +112,7 @@ def class_filter(email, protein_class, max_distance, min_support):
                                                             }
                                     )
         send_mail(
-            'TSR3DSystem Results',
+            'TSR3DSystem Results'.format(),
             '',
             settings.EMAIL_HOST_USER,
             [email],
