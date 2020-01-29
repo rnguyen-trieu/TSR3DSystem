@@ -66,13 +66,11 @@ def class_filter(email, protein_class, max_distance, min_support):
 
     # Search Classes with Apriori Results
     if len(frequent_itemsets) > 0:
-        protein_classes = [class_name for class_name in DATABASES if
-                           class_name != 'default' and class_name != protein_class]
+        protein_classes = [class_name for class_name in DATABASES if class_name != 'default']
 
         column_names = ['ItemSet: {Item: Count}']
         [column_names.extend([x + ' - % of Proteins that have the Itemset', x + ' - Proteins that have the Itemset']) for x in protein_classes]
         df = pd.DataFrame(columns=column_names)
-        float_columns = [column for column in column_names[1::2]]
 
         for itemset in frequent_itemsets['itemsets']:
             classes = {}
@@ -100,19 +98,9 @@ def class_filter(email, protein_class, max_distance, min_support):
                 class_support = len(protein_itemset_list)/Hierarchy.objects.using(class_name).count()
                 classes.update({class_name+ ' - % of Proteins that have the Itemset': class_support,
                                 class_name + ' - Proteins that have the Itemset': [str(protein_itemset_list)[1:-1]]})
-
             classes.update({'ItemSet: {Item: Count}': str(counted_item_set_list)[7:]})
             df = df.append(pd.DataFrame(classes), ignore_index=True, sort=False)
 
-        rows_to_drop = []
-        for index, row in df.iterrows():
-            for column in float_columns:
-                if row[column] != 0.0:
-                    break
-                if column == float_columns[-1]:
-                    rows_to_drop.append(index)
-        df = df.drop(rows_to_drop)
-        print(df.to_html)
         msg_html = render_to_string('email_template.html', {'filtered_dict': df.to_html(index=False),
                                                             'protein_classes': protein_classes,
                                                             'time': round(time.clock() - start, 4),
