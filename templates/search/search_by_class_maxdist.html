@@ -29,12 +29,14 @@
                             {% endif %}
                         {% endfor %}
                     </select>
-                {% else %}
+                {% elif field.name != 'email' %}
                     <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
                     {{ field }}
                 {% endif %}
             {% endfor %}
             <br/><br/>
+            <label for="id_email">Email:</label>
+            <input type="email" name="email" required="" id="id_email">
             <p id="demo3"></p>
             <br/><br/>
             <div class="row">
@@ -53,8 +55,7 @@
             <i class="fa fa-info-circle"></i>
             Tuning Intervals ---->
             Max distance: 6 - 20;
-            Min Support: 0 - 1;
-            Min Confidence: 0 - 1</br/>
+            Min Support: 0 - 1;</br/>
         </div><!--alert-->
     </div><!--row-->
 {% endblock %}
