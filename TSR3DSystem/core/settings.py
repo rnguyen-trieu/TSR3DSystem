@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import smtplib
+import ssl
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,7 +26,7 @@ SECRET_KEY = '62-9zc0hxw4lp3rg9ea@4o+fr&nung_6(x@8ajc^8b6q5ou6dt'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 APP_MODEL_NAME = 'TSR3DSystem'
@@ -36,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'background_task',
 
     'TSR3DSystem',
 ]
@@ -70,6 +74,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'TSR3DSystem.core.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ayokomilasisi18@gmail.com'
+EMAIL_HOST_PASSWORD = 'komiisawesome'
+EMAIL_USE_TLS = True
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
