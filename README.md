@@ -26,11 +26,10 @@ pip install -r requirements.txt
 
 
 ## Setup database
-App development is done using `postgresql` database.
+App development is done using `postgresql` database. Connect your databases
 Assuming you are inside the directory where `manage.py` also present
 ```bash
-python manage.py makemigrations
-python manage.py migrate
+python manage.py migrate --database=<<Database Name>>
 ```
 Collect all the static files for fast serving
 ```bash
