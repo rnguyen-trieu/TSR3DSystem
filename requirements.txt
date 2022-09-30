@@ -13,7 +13,7 @@ django-send-email==0.1.0
 django-smtp-ssl==1.0
 efficient-apriori==1.0.0
 importlib-metadata==0.23
-joblib==0.14.0
+joblib==1.2.0
 kiwisolver==1.1.0
 kombu==4.6.6
 matplotlib==3.1.2
